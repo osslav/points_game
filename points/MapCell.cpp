@@ -1,7 +1,7 @@
 #include "MapCell.h"
 #include <QPainter>
 //*
-MapCell::MapCell(MainWindow *parent, int x, int y, point cellPoint, int sizeCell)
+MapCell::MapCell(MainWindow *parent, int x, int y,int sizeCell, point cellPoint)
     //: QGraphicsItem()
 {
     parent_ = parent;
@@ -17,8 +17,6 @@ MapCell::MapCell(MainWindow *parent, int x, int y, point cellPoint, int sizeCell
 
 QRectF MapCell::boundingRect() const
 {
-    //qreal penWight = 1;
-    //return QRectF(penWight / 2, penWight / 2, size_ + penWight, size_ + penWight);
     return QRectF(0, 0, size_, size_);
 }
 

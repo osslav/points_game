@@ -18,11 +18,17 @@ struct Area
 class CapturedAreas : public QGraphicsItem
 {
 private:
+    int sizeCell_;
+    int heightGameMap_;
+    int weigthGameMap_;
+
     MapCell ***mapGame_;
     Area *areas_;
 
+    QPoint checkingCellAround(QPoint CentralPoint, QPoint FirstPoint, point player);
+
 public:
-    CapturedAreas(MapCell ***mapGame);
+    CapturedAreas(MapCell ***mapGame, int sizeCell, int heightGameMap, int weigthGameMap);
     void searchNewArea(int FirstPointByX, int FirstPointByY, point player);
     void clear();
 

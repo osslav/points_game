@@ -4,7 +4,6 @@
 #include "mainwindow.h"
 #include <QGraphicsItem>
 
-//*
 
 class MapCell : public QGraphicsItem
 {
@@ -18,7 +17,7 @@ private:
     MainWindow *parent_;
 
 public:
-    MapCell(MainWindow *parent, int x, int y, point cellPoint = empty, int sizeCell = DEFAULT_SIZE_CELL);
+    MapCell(MainWindow *parent, int x, int y, int sizeCell, point cellPoint = empty);
     QRectF boundingRect() const override;
 
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *options, QWidget *widget = 0) override;
@@ -29,7 +28,7 @@ public:
 protected:
     void mousePressEvent(QGraphicsSceneMouseEvent* event) override;
 
-};//*/
+};
 
 #endif // MAPCELL_H
 

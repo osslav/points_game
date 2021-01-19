@@ -15,9 +15,9 @@ namespace Ui { class MainWindow; }
 QT_END_NAMESPACE
 
 
-const int DEFAULT_SIZE_CELL = 20;
-const int HEIGHT_GAME_MAP = 40;
-const int WEIGTH_GAME_MAP = 30;
+//const int DEFAULT_SIZE_CELL = 20;
+//const int HEIGHT_GAME_MAP = 40;
+//const int WEIGTH_GAME_MAP = 30;
 
 
 
@@ -38,7 +38,7 @@ class MainWindow : public QMainWindow
     Q_OBJECT
 
 public:
-    MainWindow(QWidget *parent = nullptr);
+    MainWindow(int sizeCell, int heightGameMap, int weigthGameMap, QWidget *parent = nullptr);
 
     void show();
 
@@ -53,6 +53,10 @@ public slots:
 
 
 private:
+    int sizeCell_;
+    int heightGameMap_;
+    int weigthGameMap_;
+
     MapCell*** mapGame_;
     CapturedAreas* mapAreas_;
 

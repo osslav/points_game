@@ -12,10 +12,15 @@
 
 #include <QPainter>
 
-MainWindow::MainWindow(QWidget *parent)
+MainWindow::MainWindow(int sizeCell, int heightGameMap, int weigthGameMap, QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
 {
+    sizeCell_ = sizeCell;
+    heightGameMap_ = heightGameMap;
+    weigthGameMap_ = weigthGameMap;
+
+
     ui->setupUi(this);
     turn_ = redPlayer;
 
@@ -52,24 +57,24 @@ MainWindow::MainWindow(QWidget *parent)
 //*
     QGraphicsScene* q = new QGraphicsScene(this);                           //create map game
 
-    mapGame_ = new MapCell**[WEIGTH_GAME_MAP];
+    mapGame_ = new MapCell**[weigthGameMap_];
 
-    for(int i = 0; i <= WEIGTH_GAME_MAP; i++)
+    for(int i = 0; i <= weigthGameMap_; i++)
     {
-        mapGame_[i] = new MapCell*[HEIGHT_GAME_MAP];
+        mapGame_[i] = new MapCell*[heightGameMap_];
 
-        for(int j = 0; j <= HEIGHT_GAME_MAP; j++)
+        for(int j = 0; j <= heightGameMap_; j++)
         {
-            mapGame_[i][j] = new MapCell(this, i, j);
+            mapGame_[i][j] = new MapCell(this, i, j, sizeCell_);
             q->addItem(mapGame_[i][j]);
             mapGame_[i][j]->setPos(i * (mapGame_[i][j]->boundingRect()).width() + (mapGame_[i][j]->boundingRect()).width()/2,
                             j * (mapGame_[i][j]->boundingRect()).height() + (mapGame_[i][j]->boundingRect()).height()/2);
         }
     }
 
-    mapAreas_ = new  CapturedAreas(mapGame_);
+    mapAreas_ = new  CapturedAreas(mapGame_, sizeCell_, heightGameMap_, weigthGameMap_);
     q->addItem(mapAreas_);
-    mapAreas_->setPos(10, 10);
+    mapAreas_->setPos(sizeCell_ / 2, sizeCell_ / 2);
 
     ui->graphicsView->setScene(q);
 
@@ -100,8 +105,8 @@ void MainWindow::nextTurn()
 
 void MainWindow::restartGame()
 {
-    for(int i = 0; i <= WEIGTH_GAME_MAP; i++)
-        for(int j = 0; j <= HEIGHT_GAME_MAP; j++)
+    for(int i = 0; i <= weigthGameMap_; i++)
+        for(int j = 0; j <= heightGameMap_; j++)
         {
 
             mapGame_[i][j]->setPoint(empty);
@@ -112,20 +117,20 @@ void MainWindow::restartGame()
 
 void MainWindow::show()
 {
-    ui->graphicsView->setSceneRect(0, 0, WEIGTH_GAME_MAP * DEFAULT_SIZE_CELL + 40, HEIGHT_GAME_MAP * DEFAULT_SIZE_CELL + 40);//ui->graphicsView->viewport()->width(), ui->graphicsView->viewport()->height());
+    ui->graphicsView->setSceneRect(0, 0, (weigthGameMap_ + 2) * sizeCell_, (heightGameMap_ + 2) * sizeCell_);
     QWidget::show();
 }
 
 
 MainWindow::~MainWindow()
 {
-    for(int i = 0; i <= WEIGTH_GAME_MAP; i++)
-        for(int j = 0; j <= HEIGHT_GAME_MAP; j++)
+    for(int i = 0; i <= weigthGameMap_; i++)
+        for(int j = 0; j <= heightGameMap_; j++)
         {
             delete mapGame_[i][j];
         }
 
-    for(int i = 0; i <= WEIGTH_GAME_MAP; i++)
+    for(int i = 0; i <= weigthGameMap_; i++)
         delete []mapGame_[i];
 
     delete []mapGame_;

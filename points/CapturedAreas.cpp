@@ -2,8 +2,12 @@
 #include <QPainter>
 #include "MapCell.h"
 
-CapturedAreas::CapturedAreas(MapCell ***mapGame)
+CapturedAreas::CapturedAreas(MapCell ***mapGame, int sizeCell, int heightGameMap, int weigthGameMap)
 {
+    heightGameMap_ = heightGameMap;
+    weigthGameMap_ = weigthGameMap;
+    sizeCell_ = sizeCell;
+
     mapGame_ = mapGame;
     areas_ = nullptr;
 }
@@ -12,7 +16,7 @@ QRectF CapturedAreas::boundingRect() const
 {
     //qreal penWight = 0;
     //return QRectF(penWight / 2, penWight / 2, (WEIGTH_GAME_MAP * DEFAULT_SIZE_CELL) + penWight, (HEIGHT_GAME_MAP * DEFAULT_SIZE_CELL) + penWight);
-    return QRectF(0, 0, WEIGTH_GAME_MAP * DEFAULT_SIZE_CELL, HEIGHT_GAME_MAP * DEFAULT_SIZE_CELL);
+    return QRectF(0, 0, weigthGameMap_ * sizeCell_, heightGameMap_ * sizeCell_);
 }
 
 
@@ -35,21 +39,22 @@ void CapturedAreas::paint(QPainter *painter, const QStyleOptionGraphicsItem *opt
 //*
 
 //функция ищет вокруг заданной точки первую точку(по порядку от левой верхней до правой нижней, начиная с точки FirstPoint)
-QPoint checkingCellAround(MapCell ***mapGame, QPoint CentralPoint, QPoint FirstPoint, point player)
+QPoint CapturedAreas::checkingCellAround(QPoint CentralPoint, QPoint FirstPoint, point player)
 {
-    int PointByX = (CentralPoint.x() - 10) / 20,  PointByY = (CentralPoint.y() - 10) / 20;
+    int PointByX = (CentralPoint.x() - (sizeCell_ / 2)) / sizeCell_,  PointByY = (CentralPoint.y() - (sizeCell_ / 2)) / sizeCell_;
 
-    int x = (FirstPoint.x() - 10) / 20, y = (FirstPoint.y() - 10) / 20;
+    int x = (FirstPoint.x() - (sizeCell_ / 2)) / sizeCell_, y = (FirstPoint.y() - (sizeCell_ / 2)) / sizeCell_;
     if (x == PointByX + 2)
     {
         x = PointByX - 1;
         y++;
     }
 
-
-    do
+    //Q_ASSERT(y <= PointByY + 2);
+    while(y != PointByY + 2)
     {
-        if (mapGame[x][y]->getPoint() ==  player) return QPoint((x * 20) + 10, (y * 20) + 10);
+        if ((x >= 0) && (y >= 0) && (x <= weigthGameMap_) && (y <= heightGameMap_) &&
+                (mapGame_[x][y]->getPoint() ==  player)) return QPoint((x * sizeCell_) + (sizeCell_ / 2), (y * sizeCell_) + (sizeCell_ / 2));
 
         x++;
 
@@ -61,7 +66,7 @@ QPoint checkingCellAround(MapCell ***mapGame, QPoint CentralPoint, QPoint FirstP
             y++;
         }
 
-    } while(y != PointByY + 2);
+    };
 
     return QPoint();
 }
@@ -82,15 +87,17 @@ void CapturedAreas::searchNewArea(int FirstPointByX, int FirstPointByY, point pl
     QPolygon* newPolygon = new QPolygon;
 
     //for check:
-    //*newPolygon << QPoint(((FirstPointByX + 1) * 20) + 10, ((FirstPointByY) * 20) + 10) << QPoint(((FirstPointByX) * 20) + 10, ((FirstPointByY - 1) * 20) + 10)
-    //               << QPoint(((FirstPointByX - 1) * 20) + 10, ((FirstPointByY) * 20) + 10) << QPoint(((FirstPointByX) * 20) + 10, ((FirstPointByY + 1) * 20) + 10);
+    //*newPolygon << QPoint(((FirstPointByX + 1) * sizeCell_) + (sizeCell_ / 2), ((FirstPointByY) * sizeCell_) + (sizeCell_ / 2))
+    //            << QPoint(((FirstPointByX) * sizeCell_) + (sizeCell_ / 2), ((FirstPointByY - 1) * sizeCell_) + (sizeCell_ / 2))
+    //            << QPoint(((FirstPointByX - 1) * sizeCell_) + (sizeCell_ / 2), ((FirstPointByY) * sizeCell_) + (sizeCell_ / 2))
+    //            << QPoint(((FirstPointByX) * sizeCell_) + (sizeCell_ / 2), ((FirstPointByY + 1) * sizeCell_) + (sizeCell_ / 2));
 
 
 //*
 
 
-    QPoint currentPoint((FirstPointByX * 20) + 10, (FirstPointByY * 20) + 10);                                  //точка, вокруг которой будем искать соседние точки
-    QPoint firstPointBySearchNewPoint(((FirstPointByX - 1) * 20) + 10, ((FirstPointByY - 1) * 20) + 10);        //первая точка для поиска соседних точек
+    QPoint currentPoint((FirstPointByX * sizeCell_) + (sizeCell_ / 2), (FirstPointByY * sizeCell_) + (sizeCell_ / 2));                                  //точка, вокруг которой будем искать соседние точки
+    QPoint firstPointBySearchNewPoint(((FirstPointByX - 1) * sizeCell_) + (sizeCell_ / 2), ((FirstPointByY - 1) * sizeCell_) + (sizeCell_ / 2));        //первая точка для поиска соседних точек
 
     *newPolygon << currentPoint;
     int countPointInPolygon = 1;
@@ -98,23 +105,39 @@ void CapturedAreas::searchNewArea(int FirstPointByX, int FirstPointByY, point pl
 
     do
     {
-        QPoint nextPoint = checkingCellAround(mapGame_, currentPoint, firstPointBySearchNewPoint, player);              //ищем соседнюю точку
+        QPoint nextPoint = checkingCellAround(currentPoint, firstPointBySearchNewPoint, player);              //ищем соседнюю точку
+
+
+        if (nextPoint.isNull())
+        {
+            if (countPointInPolygon > 1)
+            {
+                firstPointBySearchNewPoint.setX(newPolygon->point(countPointInPolygon - 1).x() + sizeCell_);
+                firstPointBySearchNewPoint.setY(newPolygon->point(countPointInPolygon - 1).y());
+
+                currentPoint = newPolygon->point(countPointInPolygon - 2);
+            }
+
+            newPolygon->removeLast();
+            countPointInPolygon--;
+        }
 
 
         //если эта точка уже есть в полигоне то возможно 2 варианта:
         // 1) эта точка из которой мы пришли
         // 2) найден цикл
 
-        if (checkPointInPolygon(nextPoint, newPolygon))
+
+        while ((newPolygon->contains(nextPoint)) && ((countPointInPolygon < 3) || (nextPoint != newPolygon->point(0))))
         {
             // чтобы выяснить что именно произошло проверим есть ли еще соседние точки(после найденной)
-            nextPoint.rx()++;
-            nextPoint = checkingCellAround(mapGame_, currentPoint, nextPoint, player);
+            nextPoint.rx() += sizeCell_;
+            nextPoint = checkingCellAround(currentPoint, nextPoint, player);
 
 
             if (nextPoint.isNull())                         //если таких больше нет => то эта точка из которой мы пришли => мы зашли в тупик
             {
-                firstPointBySearchNewPoint.setX(newPolygon->point(countPointInPolygon - 1).x() + 20);
+                firstPointBySearchNewPoint.setX(newPolygon->point(countPointInPolygon - 1).x() + sizeCell_);
                 firstPointBySearchNewPoint.setY(newPolygon->point(countPointInPolygon - 1).y());
 
                 currentPoint = newPolygon->point(countPointInPolygon - 2);
@@ -122,6 +145,8 @@ void CapturedAreas::searchNewArea(int FirstPointByX, int FirstPointByY, point pl
                 newPolygon->removeLast();                   //удаляем точку, в которой тупик
                 countPointInPolygon--;
             }
+
+            //if ((nextPoint == newPolygon->point(0)) && (countPointInPolygon > 2)) break;
         }
 
 
@@ -132,9 +157,10 @@ void CapturedAreas::searchNewArea(int FirstPointByX, int FirstPointByY, point pl
             countPointInPolygon++;
 
             currentPoint = nextPoint;
-            firstPointBySearchNewPoint.setX(currentPoint.x() - 20);
-            firstPointBySearchNewPoint.setY(currentPoint.y() - 20);
+            firstPointBySearchNewPoint.setX(currentPoint.x() - sizeCell_);
+            firstPointBySearchNewPoint.setY(currentPoint.y() - sizeCell_);
         }
+
 
 
         //если последняя и первая точка полигона совпадают то мы
@@ -142,21 +168,28 @@ void CapturedAreas::searchNewArea(int FirstPointByX, int FirstPointByY, point pl
         //либо не нашли цикла и вернулись в начало
 
         //в обоих случаях конец алгоритма
-        if (newPolygon->point(countPointInPolygon - 1) == newPolygon->point(0))  flagExit = true;
+        if ((newPolygon->isEmpty()) || (newPolygon->point(countPointInPolygon - 1) == newPolygon->point(0)))  flagExit = true;
 
 
     } while (!flagExit);
 
 //*/
-    Area* newArea = new Area;
+    if (newPolygon->size() > 1)
+    {
+        Area* newArea = new Area;
 
-    newArea->isArea = newPolygon;
-    newArea->next = areas_;
-    newArea->team = player;
+        newArea->isArea = newPolygon;
+        newArea->next = areas_;
+        newArea->team = player;
 
-    areas_ = newArea;
+        areas_ = newArea;
 
-    update();
+        update();
+    }
+    else
+    {
+        delete newPolygon;
+    }
 }
 
 
