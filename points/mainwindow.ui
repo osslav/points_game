@@ -20,13 +20,6 @@
       <item>
        <widget class="QGraphicsView" name="graphicsView"/>
       </item>
-      <item>
-       <widget class="QPushButton" name="button1">
-        <property name="text">
-         <string>next turn</string>
-        </property>
-       </widget>
-      </item>
      </layout>
     </item>
    </layout>

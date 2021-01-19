@@ -47,13 +47,6 @@ MainWindow::MainWindow(int sizeCell, int heightGameMap, int weigthGameMap, QWidg
     QAction *quit = toolbar->addAction(QIcon(quitPix), "exit game");
     connect(quit, &QAction::triggered, qApp, &QApplication::quit);
 
-
-    ui->button1->setText("next turn");                                      //create button "next turn"
-    ui->button1->setCursor(Qt::PointingHandCursor);
-
-    connect(ui->button1, SIGNAL(clicked()), this, SLOT(nextTurn()));
-
-
 //*
     QGraphicsScene* q = new QGraphicsScene(this);                           //create map game
 
@@ -110,6 +103,7 @@ void MainWindow::restartGame()
         {
 
             mapGame_[i][j]->setPoint(empty);
+            mapGame_[i][j]->cellDeliverance();
         }
 
     mapAreas_->clear();

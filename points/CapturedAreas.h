@@ -26,7 +26,8 @@ private:
     Area *areas_;
 
     QPoint checkingCellAround(QPoint CentralPoint, QPoint FirstPoint, point player);
-    bool checkEnemyPointInPolygon(QPolygon *checkingPolygon, point player);
+    bool checkEnemyPointInPolygon(QPolygon *checkingPolygon, point enemyplayer);
+    void closePointsInPolygon(QPolygon *checkingPolygon, point enemyPlayer);
 
 public:
     CapturedAreas(MapCell ***mapGame, int sizeCell, int heightGameMap, int weigthGameMap);

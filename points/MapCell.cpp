@@ -44,7 +44,7 @@ void MapCell::paint(QPainter *painter, const QStyleOptionGraphicsItem *options, 
 void MapCell::setPoint(point newPoint)
 {
     point_ = newPoint;
-    if (point_ == empty) setCursor(Qt::PointingHandCursor);
+    if ((point_ == empty) && (!cellInArea_)) setCursor(Qt::PointingHandCursor);
     else  setCursor(Qt::ArrowCursor);
 
     update();
@@ -53,7 +53,7 @@ void MapCell::setPoint(point newPoint)
 
 void MapCell::mousePressEvent(QGraphicsSceneMouseEvent* event)
 {
-    if (point_ == empty)
+    if ((point_ == empty) && (!cellInArea_))
     {
         if (parent_->getTurn()) point_ = bluePlayer;
         else point_ = redPlayer;
@@ -71,17 +71,17 @@ void MapCell::mousePressEvent(QGraphicsSceneMouseEvent* event)
 //*/
 
 
-void MapCell::CellCaptured()
+void MapCell::cellCaptured()
 {
     cellInArea_ = true;
     setCursor(Qt::ArrowCursor);
 }
 
 
-void MapCell::CellDeliverance()
+void MapCell::cellDeliverance()
 {
-    cellInArea_ = true;
-    if (point_ == empty ) setCursor(Qt::ArrowCursor);
+    cellInArea_ = false;
+    if (point_ == empty ) setCursor(Qt::PointingHandCursor);
 }
 
 

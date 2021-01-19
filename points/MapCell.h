@@ -26,8 +26,8 @@ public:
     void setPoint(point newPoint);
     point getPoint() { return point_; };
 
-    void CellCaptured();
-    void CellDeliverance();
+    void cellCaptured();
+    void cellDeliverance();
     bool getCellInAreaFlag() { return cellInArea_; } ;
 
 

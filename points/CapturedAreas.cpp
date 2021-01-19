@@ -53,7 +53,7 @@ QPoint CapturedAreas::checkingCellAround(QPoint CentralPoint, QPoint FirstPoint,
     //Q_ASSERT(y <= PointByY + 2);
     while(y != PointByY + 2)
     {
-        if ((x >= 0) && (y >= 0) && (x <= weigthGameMap_) && (y <= heightGameMap_) &&
+        if ((x >= 0) && (y >= 0) && (x <= weigthGameMap_) && (y <= heightGameMap_) && (!mapGame_[x][y]->getCellInAreaFlag()) &&
                 (mapGame_[x][y]->getPoint() ==  player)) return QPoint((x * sizeCell_) + (sizeCell_ / 2), (y * sizeCell_) + (sizeCell_ / 2));
 
         x++;
@@ -98,6 +98,23 @@ bool CapturedAreas::checkEnemyPointInPolygon(QPolygon *checkingPolygon, point en
 
     return false;
 
+}
+
+
+void CapturedAreas::closePointsInPolygon(QPolygon *checkingPolygon, point enemyPlayer)
+{
+    for (int y = 1; y <= heightGameMap_; y++)
+        for (int x = 1; x <= weigthGameMap_; x++)
+        {
+            QPoint nextPoint((x * sizeCell_) + (sizeCell_ / 2), (y * sizeCell_) + (sizeCell_ / 2));
+
+            if (!checkingPolygon->contains(nextPoint))
+            {
+                QPolygon polygonAroundArea;
+                polygonAroundArea << nextPoint;
+                if (checkingPolygon->intersects(polygonAroundArea)) mapGame_[x][y]->cellCaptured();
+            }
+        }
 }
 
 
@@ -200,6 +217,8 @@ void CapturedAreas::searchNewArea(int FirstPointByX, int FirstPointByY, point pl
 
     if ((newPolygon->size() > 1) && (checkEnemyPointInPolygon(newPolygon, enemyPlayer)))
     {
+        closePointsInPolygon(newPolygon, enemyPlayer);
+
         Area* newArea = new Area;
 
         newArea->isArea = newPolygon;
