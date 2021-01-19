@@ -101,7 +101,7 @@ bool CapturedAreas::checkEnemyPointInPolygon(QPolygon *checkingPolygon, point en
 }
 
 
-void CapturedAreas::closePointsInPolygon(QPolygon *checkingPolygon, point enemyPlayer)
+void CapturedAreas::capturedPointsInPolygon(QPolygon *checkingPolygon, point enemyPlayer)
 {
     for (int y = 1; y <= heightGameMap_; y++)
         for (int x = 1; x <= weigthGameMap_; x++)
@@ -217,7 +217,7 @@ void CapturedAreas::searchNewArea(int FirstPointByX, int FirstPointByY, point pl
 
     if ((newPolygon->size() > 1) && (checkEnemyPointInPolygon(newPolygon, enemyPlayer)))
     {
-        closePointsInPolygon(newPolygon, enemyPlayer);
+        capturedPointsInPolygon(newPolygon, enemyPlayer);
 
         Area* newArea = new Area;
 
