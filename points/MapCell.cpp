@@ -11,6 +11,8 @@ MapCell::MapCell(MainWindow *parent, int x, int y,int sizeCell, point cellPoint)
     locationByX_ = x;
     locationByY_ = y;
 
+    cellInArea_ = false;
+
     setCursor(Qt::PointingHandCursor);
 }
 
@@ -67,4 +69,19 @@ void MapCell::mousePressEvent(QGraphicsSceneMouseEvent* event)
 
 }
 //*/
+
+
+void MapCell::CellCaptured()
+{
+    cellInArea_ = true;
+    setCursor(Qt::ArrowCursor);
+}
+
+
+void MapCell::CellDeliverance()
+{
+    cellInArea_ = true;
+    if (point_ == empty ) setCursor(Qt::ArrowCursor);
+}
+
 

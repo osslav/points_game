@@ -81,6 +81,26 @@ bool checkPointInPolygon(QPoint point, QPolygon* polygon)
 }
 //*/
 
+//проверка есть ли чужие точки внутри полигона
+bool CapturedAreas::checkEnemyPointInPolygon(QPolygon *checkingPolygon, point enemyPlayer)
+{
+    for (int y = 1; y <= heightGameMap_; y++)
+        for (int x = 1; x <= weigthGameMap_; x++)
+        {
+            if (mapGame_[x][y]->getPoint() == enemyPlayer)
+            {
+                QPolygon polygonAroundArea(1);
+                polygonAroundArea.setPoint(0, (x * sizeCell_) + (sizeCell_ / 2), (y * sizeCell_) + (sizeCell_ / 2));
+                if (checkingPolygon->intersects(polygonAroundArea)) return true;
+            }
+
+        }
+
+    return false;
+
+}
+
+
 void CapturedAreas::searchNewArea(int FirstPointByX, int FirstPointByY, point player)
 {
 
@@ -174,7 +194,11 @@ void CapturedAreas::searchNewArea(int FirstPointByX, int FirstPointByY, point pl
     } while (!flagExit);
 
 //*/
-    if (newPolygon->size() > 1)
+    point enemyPlayer;
+    if (player == bluePlayer) enemyPlayer = redPlayer;
+    else enemyPlayer = bluePlayer;
+
+    if ((newPolygon->size() > 1) && (checkEnemyPointInPolygon(newPolygon, enemyPlayer)))
     {
         Area* newArea = new Area;
 

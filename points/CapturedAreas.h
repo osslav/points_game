@@ -26,10 +26,11 @@ private:
     Area *areas_;
 
     QPoint checkingCellAround(QPoint CentralPoint, QPoint FirstPoint, point player);
+    bool checkEnemyPointInPolygon(QPolygon *checkingPolygon, point player);
 
 public:
     CapturedAreas(MapCell ***mapGame, int sizeCell, int heightGameMap, int weigthGameMap);
-    void searchNewArea(int FirstPointByX, int FirstPointByY, point player);
+    void searchNewArea(int FirstPointByX, int FirstPointByY, point enemyPlayer);
     void clear();
 
     QRectF boundingRect() const;

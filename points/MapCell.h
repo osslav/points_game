@@ -12,6 +12,8 @@ private:
     int locationByX_;
     int locationByY_;
 
+    bool cellInArea_;
+
     point point_;
     int size_;
     MainWindow *parent_;
@@ -23,6 +25,10 @@ public:
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *options, QWidget *widget = 0) override;
     void setPoint(point newPoint);
     point getPoint() { return point_; };
+
+    void CellCaptured();
+    void CellDeliverance();
+    bool getCellInAreaFlag() { return cellInArea_; } ;
 
 
 protected:
