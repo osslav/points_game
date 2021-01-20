@@ -52,11 +52,11 @@ MainWindow::MainWindow(int sizeCell, int heightGameMap, int weigthGameMap, QWidg
 
     mapGame_ = new MapCell**[weigthGameMap_];
 
-    for(int i = 0; i <= weigthGameMap_; i++)
+    for(int i = 0; i < weigthGameMap_; i++)
     {
         mapGame_[i] = new MapCell*[heightGameMap_];
 
-        for(int j = 0; j <= heightGameMap_; j++)
+        for(int j = 0; j < heightGameMap_; j++)
         {
             mapGame_[i][j] = new MapCell(this, i, j, sizeCell_);
             q->addItem(mapGame_[i][j]);
@@ -98,8 +98,8 @@ void MainWindow::nextTurn()
 
 void MainWindow::restartGame()
 {
-    for(int i = 0; i <= weigthGameMap_; i++)
-        for(int j = 0; j <= heightGameMap_; j++)
+    for(int i = 0; i < weigthGameMap_; i++)
+        for(int j = 0; j < heightGameMap_; j++)
         {
 
             mapGame_[i][j]->setPoint(empty);
@@ -118,13 +118,13 @@ void MainWindow::show()
 
 MainWindow::~MainWindow()
 {
-    for(int i = 0; i <= weigthGameMap_; i++)
-        for(int j = 0; j <= heightGameMap_; j++)
+    for(int i = 0; i < weigthGameMap_; i++)
+        for(int j = 0; j < heightGameMap_; j++)
         {
             delete mapGame_[i][j];
         }
 
-    for(int i = 0; i <= weigthGameMap_; i++)
+    for(int i = 0; i < weigthGameMap_; i++)
         delete []mapGame_[i];
 
     delete []mapGame_;

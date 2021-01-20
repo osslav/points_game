@@ -53,7 +53,7 @@ QPoint CapturedAreas::checkingCellAround(QPoint CentralPoint, QPoint FirstPoint,
     //Q_ASSERT(y <= PointByY + 2);
     while(y != PointByY + 2)
     {
-        if ((x >= 0) && (y >= 0) && (x <= weigthGameMap_) && (y <= heightGameMap_) && (!mapGame_[x][y]->getCellInAreaFlag()) &&
+        if ((x >= 0) && (y >= 0) && (x < weigthGameMap_) && (y < heightGameMap_) && (!mapGame_[x][y]->getCellInAreaFlag()) &&
                 (mapGame_[x][y]->getPoint() ==  player)) return QPoint((x * sizeCell_) + (sizeCell_ / 2), (y * sizeCell_) + (sizeCell_ / 2));
 
         x++;
@@ -84,8 +84,8 @@ bool checkPointInPolygon(QPoint point, QPolygon* polygon)
 //проверка есть ли чужие точки внутри полигона
 bool CapturedAreas::checkEnemyPointInPolygon(QPolygon *checkingPolygon, point enemyPlayer)
 {
-    for (int y = 1; y <= heightGameMap_; y++)
-        for (int x = 1; x <= weigthGameMap_; x++)
+    for (int y = 1; y < heightGameMap_; y++)
+        for (int x = 1; x < weigthGameMap_; x++)
         {
             if (mapGame_[x][y]->getPoint() == enemyPlayer)
             {
@@ -103,8 +103,8 @@ bool CapturedAreas::checkEnemyPointInPolygon(QPolygon *checkingPolygon, point en
 
 void CapturedAreas::capturedPointsInPolygon(QPolygon *checkingPolygon, point enemyPlayer)
 {
-    for (int y = 1; y <= heightGameMap_; y++)
-        for (int x = 1; x <= weigthGameMap_; x++)
+    for (int y = 1; y < heightGameMap_; y++)
+        for (int x = 1; x < weigthGameMap_; x++)
         {
             QPoint nextPoint((x * sizeCell_) + (sizeCell_ / 2), (y * sizeCell_) + (sizeCell_ / 2));
 
